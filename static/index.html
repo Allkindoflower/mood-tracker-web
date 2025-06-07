@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mood Tracker</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div>
+    <h1>Mood Tracker</h1>
+    <form id="mood-form">
+      <input type="text" id="mood-input" placeholder="How do you feel?" required />
+      <button type="submit">Log Mood</button>
+    </form>
+    <ul id="mood-list"></ul>
+  </div>
+
+  <script>
+    const form = document.getElementById('mood-form');
+    const input = document.getElementById('mood-input');
+    const moodList = document.getElementById('mood-list');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const mood = input.value.trim();
+      if (!mood) return;
+
+      // POST the mood to backend
+      await fetch('/mood', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mood }),
+      });
+
+      input.value = '';
+      loadMoods();
+    });
+
+    async function loadMoods() {
+      const res = await fetch('/logged-moods');
+      const data = await res.json();
+      moodList.innerHTML = '';
+
+      if (data.moods.length === 0) {
+        moodList.innerHTML = '<li>No moods logged yet.</li>';
+        return;
+      }
+
+      for (const entry of data.moods) {
+        const li = document.createElement('li');
+        li.textContent = entry;
+        moodList.appendChild(li);
+      }
+    }
+
+    // Load moods initially
+    loadMoods();
+  </script>
+</body>
+</html>
