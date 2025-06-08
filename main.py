@@ -18,7 +18,7 @@ class MoodEntry(BaseModel):
 @app.post('/mood')
 def log_mood(entry: MoodEntry):
     date_today = date.today()
-    formatted_date = date_today.strftime("%d-%m-%Y")
+    formatted_date = date_today.strftime("%Y-%m-%d")
     now = datetime.now()
     hour = now.hour
     minute = now.minute
