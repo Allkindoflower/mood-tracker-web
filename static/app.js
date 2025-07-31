@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let moodToDelete = null;
 
-  // Popup open/close helpers
+  
   const openPopup = (popup) => {
     popup.classList.remove("hidden");
     popup.querySelector(".popup-content").focus();
@@ -24,35 +24,36 @@ document.addEventListener("DOMContentLoaded", () => {
     popup.classList.add("hidden");
   };
 
-  // Fetch and render moods
+  
   const renderMoods = async () => {
-    try {
-      const res = await fetch("/logged-moods");
-      const data = await res.json();
+  try {
+    const res = await fetch("/logged-moods");
+    const data = await res.json();
 
-      list.innerHTML = "";
+    list.innerHTML = "";
 
-      if (!data.moods || data.moods.length === 0) {
-        list.innerHTML = "<li>No moods logged yet.</li>";
-        return;
-      }
-
-      data.moods.forEach(({ mood_id, time, mood }) => {
-        if (!mood_id) return;
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <span>${time} — ${mood}</span>
-          <button class="delete-button" data-id="${mood_id}" aria-label="Delete mood">✖</button>
-        `;
-        list.appendChild(li);
-      });
-    } catch (err) {
-      console.error("Failed to load moods:", err);
-      list.innerHTML = "<li>Failed to load moods.</li>";
+    if (!data.moods || data.moods.length === 0) {
+  
+      return; 
     }
-  };
 
-  // Fetch and update mood count display
+    data.moods.forEach(({ mood_id, time, mood }) => {
+      if (!mood_id) return;
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span>${time} — ${mood}</span>
+        <button class="delete-button" data-id="${mood_id}" aria-label="Delete mood">✖</button>
+      `;
+      list.appendChild(li);
+    });
+  } catch (err) {
+    console.error("Failed to load moods:", err);
+    list.innerHTML = "<li>Failed to load moods.</li>";
+  }
+};
+
+
+  
   const updateCount = async () => {
     try {
       const res = await fetch("/mood-count");
@@ -64,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Form submit to add mood
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const mood = input.value.trim();
@@ -87,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Mood delete button click
+
   list.addEventListener("click", (e) => {
     if (e.target.classList.contains("delete-button")) {
       moodToDelete = e.target.dataset.id;
@@ -95,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Confirm deletion yes
+  
   confirmYes.addEventListener("click", async () => {
     if (!moodToDelete) return;
 
@@ -114,13 +115,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Confirm deletion no
+
   confirmNo.addEventListener("click", () => {
     moodToDelete = null;
     closePopup(confirmPopup);
   });
 
-  // Close confirm popup by clicking outside popup content
+  
   confirmPopup.addEventListener("click", (e) => {
     if (e.target === confirmPopup) {
       moodToDelete = null;
@@ -128,14 +129,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Help popup open and close
+
   helpButton.addEventListener("click", () => openPopup(helpPopup));
   helpClose.addEventListener("click", () => closePopup(helpPopup));
   helpPopup.addEventListener("click", (e) => {
     if (e.target === helpPopup) closePopup(helpPopup);
   });
 
-  // Initial load
+
   renderMoods();
   updateCount();
 });

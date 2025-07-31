@@ -29,7 +29,7 @@ def root():
 @app.post("/mood")
 def log_mood(entry: MoodEntry, user_id: str = Cookie(None)):
     if not user_id:
-        user_id = str(uuid.uuid4())  # fallback, should rarely happen
+        user_id = str(uuid.uuid4()) 
     now = datetime.now()
     time_str = f"{now.year}-{now.month:02d}-{now.day:02d} {now.hour}:{now.minute:02d}"
     add_mood(user_id, time_str, entry.mood)
@@ -38,11 +38,12 @@ def log_mood(entry: MoodEntry, user_id: str = Cookie(None)):
 @app.get("/logged-moods")
 def show_moods(user_id: str = Cookie(None)):
     if not user_id:
-        return {"message": "No user ID found in cookies."}
+        return {"moods": []} 
     moods = get_moods(user_id)
     if not moods:
-        return {"message": "No moods logged yet."}
+        return {"moods": []}
     return {"moods": moods}
+
 
 @app.delete("/mood/delete/{mood_id}")
 def delete_mood(mood_id: int):
