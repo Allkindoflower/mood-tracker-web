@@ -1,26 +1,91 @@
-Mood Tracker API
-This is a simple FastAPI web app that lets you log your mood and view your mood history.
+# Mood Logger
 
-What it does
-POST /mood — Accepts a mood entry (a short text like "happy" or "stressed") and saves it with the current date and time to a file (mood.history.txt).
+A simple, lightweight web app to track and log your moods over time.  
+Built with FastAPI, SQLite, and vanilla JavaScript for a smooth user experience.
 
-GET /logged-moods — Reads all saved mood entries from the file and returns them as a list.
+---
 
-GET / — Serves the homepage (index.html) from the static folder, which can be a simple interface to interact with the API.
+## Why This Project Exists
 
-How it works
-Moods are sent as JSON with a single field called mood.
+Keeping track of emotions can help build self-awareness and mental well-being.  
+This app offers a no-frills way to quickly log moods and review your emotional patterns — all stored locally with cookie-based user separation.
 
-Each mood entry is timestamped with the day, hour, and minute when it was logged.
+---
 
-The app stores the data in a database file in the project folder.
+## Features
 
-Static files like the homepage HTML and CSS live in a static folder.
+- Log your current mood with a timestamp  
+- View all previously logged moods  
+- Delete mood entries easily  
+- Mood count summary  
+- Accessible and responsive design  
+- Lightweight backend API powered by FastAPI  
 
-Why this is useful
-It’s a lightweight way to track your mood over time without a database.
+---
 
-The app is easy to extend with more features or a nicer frontend.
+## Getting Started
 
-It’s a practical example of how to use FastAPI with file I/O, data validation, and serving static files.
+### Prerequisites
+
+- Python 3.9+  
+- `pip` package manager  
+
+### Setup & Run
+
+1. Clone this repo  
+2. Create and activate a virtual environment (recommended)  
+3. Install dependencies:  
+   ```bash
+   pip install -r requirements.txt
+
+### Run the app
+   uvicorn main:app --reload
+   
+### Open http://localhost:8000 in your browser
+
+### Run tests with pytest at project root
+
+Tech Stack
+FastAPI
+
+SQLite (via custom database layer)
+
+Vanilla JavaScript (Fetch API + DOM manipulation)
+
+HTML5 & CSS3
+
+Future Improvements
+Add user authentication
+
+Persist moods with a cloud database
+
+Improve UI with a frontend framework (React, Vue, etc.)
+
+Add mood analytics and visualizations
+
+Author
+Uğur Baştuğ — self-taught Python dev passionate about building useful tools to improve daily life.
+
+Feel free to reach out or contribute!
+Email: bastugugur85@gmail.com
+GitHub: Allkindoflower
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
 
