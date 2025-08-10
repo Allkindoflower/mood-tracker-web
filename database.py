@@ -13,16 +13,17 @@ def create_table():
         mood_id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT NOT NULL,
         time TEXT NOT NULL,
-        mood TEXT NOT NULL
+        mood TEXT NOT NULL,
+        sentiment TEXT NOT NULL
     )
     ''')
     conn.commit()
     conn.close()
 
-def add_mood(user_id, time, mood):
+def add_mood(user_id, time, mood, sentiment):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO moods (user_id, time, mood) VALUES (?, ?, ?)', (user_id, time, mood))
+    cursor.execute('INSERT INTO moods (user_id, time, mood, sentiment) VALUES (?, ?, ?, ?)', (user_id, time, mood, sentiment))
     conn.commit()
     conn.close()
 

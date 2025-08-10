@@ -5,6 +5,8 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from models import MoodEntry
 from database import create_table, add_mood, delete_mood_db, get_mood_count, get_moods
+from sentiment_analysis import classify_sentiment
+
 
 app = FastAPI()
 
@@ -26,14 +28,22 @@ async def add_user_id_cookie(request: Request, call_next):
 def root():
     return FileResponse("static/index.html")
 
+
 @app.post("/mood")
 def log_mood(entry: MoodEntry, user_id: str = Cookie(None)):
     if not user_id:
-        user_id = str(uuid.uuid4()) 
+        user_id = str(uuid.uuid4())
+
+    mood_to_save = entry.mood.lower()
+    sentiment = classify_sentiment(mood_to_save)
+
     now = datetime.now()
     time_str = f"{now.year}-{now.month:02d}-{now.day:02d} {now.hour}:{now.minute:02d}"
-    add_mood(user_id, time_str, entry.mood)
-    return {"message": "Mood successfully added!"}
+
+    # Assume add_mood signature updated to accept sentiment
+    add_mood(user_id, time_str, mood_to_save, sentiment)
+
+    return {"message": "Mood successfully added!", "mood": mood_to_save, "sentiment": sentiment}
 
 @app.get("/logged-moods")
 def show_moods(user_id: str = Cookie(None)):
