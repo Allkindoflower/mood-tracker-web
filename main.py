@@ -40,13 +40,13 @@ def log_mood(entry: MoodEntry, user_id: str = Cookie(None)):
     now = datetime.now()
     time_str = f"{now.year}-{now.month:02d}-{now.day:02d} {now.hour}:{now.minute:02d}"
 
-    # Assume add_mood signature updated to accept sentiment
     add_mood(user_id, time_str, mood_to_save, sentiment)
 
     return {"message": "Mood successfully added!", "mood": mood_to_save, "sentiment": sentiment}
 
 @app.get("/logged-moods")
 def show_moods(user_id: str = Cookie(None)):
+    
     if not user_id:
         return {"moods": []} 
     moods = get_moods(user_id)
