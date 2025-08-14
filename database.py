@@ -1,27 +1,13 @@
-from dotenv import load_dotenv
-import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import sqlite3
+from sqlite3 import Connection, Row
+from datetime import datetime
 
-load_dotenv()
+DB_FILE = "mood_logger.db"  # SQLite database file
 
-def get_connection():
-    host = os.getenv("DB_HOST")
-    port = os.getenv("DB_PORT", 5432)
-    database = os.getenv("DB_NAME")
-    user = os.getenv("DB_USER")
-    password = os.getenv("DB_PASSWORD")
-
-    conn = psycopg2.connect(
-        host=host,
-        port=port,
-        database=database,
-        user=user,
-        password=password,
-        sslmode="require" if os.getenv("DB_SSLMODE") == "require" else None
-    )
+def get_connection() -> Connection:
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = Row  # allows dict-like access to rows
     return conn
-
 
 
 def create_table():
@@ -29,7 +15,7 @@ def create_table():
     cursor = conn.cursor()
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS moods (
-        mood_id SERIAL PRIMARY KEY,
+        mood_id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT NOT NULL,
         time TIMESTAMP NOT NULL,
         mood TEXT NOT NULL,
@@ -41,11 +27,11 @@ def create_table():
     conn.close()
 
 
-def add_mood(user_id, time, mood, sentiment):
+def add_mood(user_id, time: datetime, mood, sentiment):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO moods (user_id, time, mood, sentiment) VALUES (%s, %s, %s, %s)',
+        'INSERT INTO moods (user_id, time, mood, sentiment) VALUES (?, ?, ?, ?)',
         (user_id, time, mood, sentiment)
     )
     conn.commit()
@@ -55,18 +41,18 @@ def add_mood(user_id, time, mood, sentiment):
 
 def get_moods(user_id):
     conn = get_connection()
-    cursor = conn.cursor(cursor_factory=RealDictCursor)
-    cursor.execute('SELECT mood_id, time, mood FROM moods WHERE user_id = %s', (user_id,))
+    cursor = conn.cursor()
+    cursor.execute('SELECT mood_id, time, mood FROM moods WHERE user_id = ?', (user_id,))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    return rows
+    return [dict(row) for row in rows]  # convert Row objects to dicts
 
 
 def delete_mood_db(mood_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM moods WHERE mood_id = %s', (mood_id,))
+    cursor.execute('DELETE FROM moods WHERE mood_id = ?', (mood_id,))
     conn.commit()
     cursor.close()
     conn.close()
@@ -75,9 +61,8 @@ def delete_mood_db(mood_id):
 def get_mood_count(user_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT COUNT(*) FROM moods WHERE user_id = %s', (user_id,))
+    cursor.execute('SELECT COUNT(*) FROM moods WHERE user_id = ?', (user_id,))
     count = cursor.fetchone()[0]
     cursor.close()
     conn.close()
     return count
-
