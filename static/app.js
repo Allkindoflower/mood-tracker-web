@@ -15,12 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let moodToDelete = null;
 
   function polarityToColor(polarity) {
-  // polarity: -1 (very negative) → 1 (very positive)
-  const red = polarity < 0 ? 255 : Math.floor(255 * (1 - polarity));
-  const green = polarity > 0 ? 255 : Math.floor(255 * (1 + polarity));
-  const blue = 0;
-  return `rgb(${red}, ${green}, ${blue})`;
-}
+    const red = polarity < 0 ? 255 : Math.floor(255 * (1 - polarity));
+    const green = polarity > 0 ? 255 : Math.floor(255 * (1 + polarity));
+    const blue = 0;
+    return `rgb(${red}, ${green}, ${blue})`;
+  }
 
   const openPopup = (popup) => {
     popup.classList.remove("hidden");
@@ -31,38 +30,36 @@ document.addEventListener("DOMContentLoaded", () => {
     popup.classList.add("hidden");
   };
 
-  
   const renderMoods = async () => {
-  try {
-    const res = await fetch("/logged-moods");
-    const data = await res.json();
+    try {
+      const res = await fetch("/logged-moods");
+      const data = await res.json();
 
-    list.innerHTML = "";
+      list.innerHTML = "";
 
-    if (!data.moods || data.moods.length === 0) {
-  
-      return; 
+      if (!data.moods || data.moods.length === 0) return;
+
+      data.moods.forEach(({ mood_id, time, mood, polarity }) => {
+        if (!mood_id) return;
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+          <span>${time} — ${mood}</span>
+          <button class="delete-button" data-id="${mood_id}" aria-label="Delete mood">✖</button>
+        `;
+
+        if (polarity !== undefined) {
+          li.style.backgroundColor = polarityToColor(polarity);
+        }
+
+        list.appendChild(li);
+      });
+    } catch (err) {
+      console.error("Failed to load moods:", err);
+      list.innerHTML = "<li>Failed to load moods.</li>";
     }
+  };
 
-    data.moods.forEach(({ mood_id, time, mood, polarity }) => {
-  if (!mood_id) return;
-  const li = document.createElement("li");
-
-  li.innerHTML = `
-    <span>${time} — ${mood}</span>
-    <button class="delete-button" data-id="${mood_id}" aria-label="Delete mood">✖</button>
-  `;
-
-  if (polarity !== undefined) {
-    li.style.backgroundColor = polarityToColor(polarity);
-  }
-
-  list.appendChild(li);
-});
-
-
-
-  
   const updateCount = async () => {
     try {
       const res = await fetch("/mood-count");
@@ -73,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
       count.textContent = "Failed to load mood count.";
     }
   };
-
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -97,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-
   list.addEventListener("click", (e) => {
     if (e.target.classList.contains("delete-button")) {
       moodToDelete = e.target.dataset.id;
@@ -105,7 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  
   confirmYes.addEventListener("click", async () => {
     if (!moodToDelete) return;
 
@@ -124,27 +118,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-
   confirmNo.addEventListener("click", () => {
     moodToDelete = null;
     closePopup(confirmPopup);
   });
 
-  
   confirmPopup.addEventListener("click", (e) => {
-    if (e.target === confirmPopup) {
-      moodToDelete = null;
-      closePopup(confirmPopup);
-    }
+    if (e.target === confirmPopup) closePopup(confirmPopup);
   });
-
 
   helpButton.addEventListener("click", () => openPopup(helpPopup));
   helpClose.addEventListener("click", () => closePopup(helpPopup));
   helpPopup.addEventListener("click", (e) => {
     if (e.target === helpPopup) closePopup(helpPopup);
   });
-
 
   renderMoods();
   updateCount();
