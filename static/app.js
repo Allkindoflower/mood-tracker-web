@@ -14,7 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let moodToDelete = null;
 
-  
+  function polarityToColor(polarity) {
+  // polarity: -1 (very negative) → 1 (very positive)
+  const red = polarity < 0 ? 255 : Math.floor(255 * (1 - polarity));
+  const green = polarity > 0 ? 255 : Math.floor(255 * (1 + polarity));
+  const blue = 0;
+  return `rgb(${red}, ${green}, ${blue})`;
+}
+
   const openPopup = (popup) => {
     popup.classList.remove("hidden");
     popup.querySelector(".popup-content").focus();
@@ -37,20 +44,22 @@ document.addEventListener("DOMContentLoaded", () => {
       return; 
     }
 
-    data.moods.forEach(({ mood_id, time, mood }) => {
-      if (!mood_id) return;
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <span>${time} — ${mood}</span>
-        <button class="delete-button" data-id="${mood_id}" aria-label="Delete mood">✖</button>
-      `;
-      list.appendChild(li);
-    });
-  } catch (err) {
-    console.error("Failed to load moods:", err);
-    list.innerHTML = "<li>Failed to load moods.</li>";
+    data.moods.forEach(({ mood_id, time, mood, polarity }) => {
+  if (!mood_id) return;
+  const li = document.createElement("li");
+
+  li.innerHTML = `
+    <span>${time} — ${mood}</span>
+    <button class="delete-button" data-id="${mood_id}" aria-label="Delete mood">✖</button>
+  `;
+
+  if (polarity !== undefined) {
+    li.style.backgroundColor = polarityToColor(polarity);
   }
-};
+
+  list.appendChild(li);
+});
+
 
 
   

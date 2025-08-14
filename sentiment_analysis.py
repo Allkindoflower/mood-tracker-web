@@ -1,10 +1,11 @@
 from textblob import TextBlob
 
-def classify_sentiment(text: str) -> str:
+def classify_sentiment(text: str):
     polarity = TextBlob(text).sentiment.polarity
     if polarity > 0.1:
-        return "positive"
+        sentiment = "positive"
     elif polarity < -0.1:
-        return "negative"
+        sentiment = "negative"
     else:
-        return "neutral"
+        sentiment = "neutral"
+    return sentiment, polarity

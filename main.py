@@ -35,14 +35,20 @@ def log_mood(entry: MoodEntry, user_id: str = Cookie(None)):
         user_id = str(uuid.uuid4())
 
     mood_to_save = entry.mood.lower()
-    sentiment = classify_sentiment(mood_to_save)
+    sentiment, polarity = classify_sentiment(mood_to_save)
 
     now = datetime.now()
     time_str = f"{now.year}-{now.month:02d}-{now.day:02d} {now.hour}:{now.minute:02d}"
 
     add_mood(user_id, time_str, mood_to_save, sentiment)
 
-    return {"message": "Mood successfully added!", "mood": mood_to_save, "sentiment": sentiment}
+    return {
+        "message": "Mood successfully added!",
+        "mood": mood_to_save,
+        "sentiment": sentiment,
+        "polarity": polarity  # return for frontend gradient
+    }
+
 
 @app.get("/logged-moods")
 def show_moods(user_id: str = Cookie(None)):
@@ -52,7 +58,9 @@ def show_moods(user_id: str = Cookie(None)):
     moods = get_moods(user_id)
     if not moods:
         return {"moods": []}
-    return {"moods": moods}
+    # In your get_moods function, include polarity
+    return {"moods": [{"mood_id": m["mood_id"], "time": m["time"], "mood": m["mood"], "polarity": m["polarity"]} for m in rows]}
+
 
 
 @app.delete("/mood/delete/{mood_id}")
