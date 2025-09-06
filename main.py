@@ -50,7 +50,6 @@ def log_mood(entry: MoodEntry, user_id: str = Cookie(None)):
         "polarity": polarity
     }
 
-
 @app.get("/logged-moods")
 def show_moods(user_id: str = Cookie(None)):
     if not user_id:
@@ -71,8 +70,6 @@ def show_moods(user_id: str = Cookie(None)):
         })
 
     return {"moods": moods_with_polarity}
-
-
 
 @app.delete("/mood/delete/{mood_id}")
 def delete_mood(mood_id: int):

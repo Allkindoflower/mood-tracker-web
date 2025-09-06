@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     } catch (err) {
       console.error("Failed to load moods:", err);
-      list.innerHTML = "<li>Failed to load moods.</li>";
+      list.innerHTML = "<li>Failed to load moods, refresh the page.</li>";
     }
   };
 
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
       count.textContent = data.message || "No mood count available.";
     } catch (err) {
       console.error("Failed to load mood count:", err);
-      count.textContent = "Failed to load mood count.";
+      count.textContent = "Failed to load mood count, refresh the page.";
     }
   };
 
