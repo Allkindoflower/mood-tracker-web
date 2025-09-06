@@ -23,6 +23,12 @@ This app offers a no-frills way to quickly log moods and review your emotional p
 
 ---
 
+## Mood Logger in action:
+
+<img width="643" height="694" alt="image" src="https://github.com/user-attachments/assets/b5b0d6b6-81e6-41dd-928e-720b43a6e155" />
+
+---
+
 ## Getting Started
 
 ### Prerequisites
