@@ -1,3 +1,6 @@
+//TODO: moods are unreadable, fix
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("mood-form");
   const input = document.getElementById("mood-input");
@@ -31,36 +34,40 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderMoods = async () => {
-    try {
-      const res = await fetch("/logged-moods");
-      const data = await res.json();
+  try {
+    const res = await fetch("/logged-moods");
+    const data = await res.json();
 
-      list.innerHTML = "";
+    list.innerHTML = "";
 
-      if (!data.moods || data.moods.length === 0) return;
-
-      data.moods.forEach(({ mood_id, time, mood, polarity }) => {
-        if (!mood_id) return;
-        const li = document.createElement("li");
-
-        li.innerHTML = `
-          <span>${time} — ${mood}</span>
-          <button class="delete-button" data-id="${mood_id}" aria-label="Delete mood">✖</button>
-        `;
-
-        if (polarity !== undefined) {
-          li.style.color = polarityToColor(polarity);
-          li.style.backgroundColor = "white";
-}
-
-
-        list.appendChild(li);
-      });
-    } catch (err) {
-      console.error("Failed to load moods:", err);
-      list.innerHTML = "<li>Failed to load moods, refresh the page.</li>";
+    if (!data.moods || data.moods.length === 0) {
+      list.innerHTML = "<li>No moods logged yet.</li>";
+      return;
     }
-  };
+
+    data.moods.forEach(({ mood_id, time, mood, polarity }) => {
+      if (!mood_id) return;
+
+      const li = document.createElement("li");
+
+      li.innerHTML = `
+        <span>${time} — ${mood}</span>
+        <button class="delete-button" data-id="${mood_id}" aria-label="Delete mood">✖</button>
+      `;
+
+      // Keep text color by sentiment
+      if (polarity !== undefined) {
+        li.style.color = polarityToColor(polarity);
+      }
+
+      list.appendChild(li);
+    });
+  } catch (err) {
+    console.error("Failed to load moods:", err);
+    list.innerHTML = "<li>Failed to load moods, refresh the page.</li>";
+  }
+};
+
 
   const updateCount = async () => {
     try {
