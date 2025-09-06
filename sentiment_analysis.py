@@ -1,4 +1,8 @@
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import nltk
+
+# Download beforehand for deployment
+nltk.download('vader_lexicon', quiet=True)
 
 # Initialize once
 vader = SentimentIntensityAnalyzer()

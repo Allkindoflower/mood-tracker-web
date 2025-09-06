@@ -8,6 +8,7 @@ from database import create_table, add_mood, delete_mood_db, get_mood_count, get
 from sentiment_analysis import classify_sentiment
 
 
+
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
