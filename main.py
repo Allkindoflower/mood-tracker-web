@@ -24,6 +24,7 @@ async def add_user_id_cookie(request: Request, call_next):
         response.set_cookie(key="user_id", value=user_id, max_age=60*60*24*365*10)
     return response
 
+
 @app.get("/", response_class=HTMLResponse)
 def root():
     return FileResponse("static/index.html")
@@ -46,20 +47,30 @@ def log_mood(entry: MoodEntry, user_id: str = Cookie(None)):
         "message": "Mood successfully added!",
         "mood": mood_to_save,
         "sentiment": sentiment,
-        "polarity": polarity  # return for frontend gradient
+        "polarity": polarity
     }
 
 
 @app.get("/logged-moods")
 def show_moods(user_id: str = Cookie(None)):
-    
     if not user_id:
         return {"moods": []} 
     moods = get_moods(user_id)
     if not moods:
         return {"moods": []}
-    # In your get_moods function, include polarity
-    return {"moods": [{"mood_id": m["mood_id"], "time": m["time"], "mood": m["mood"], "polarity": m["polarity"]} for m in rows]}
+
+    # Compute polarity dynamically
+    moods_with_polarity = []
+    for m in moods:
+        _, polarity = classify_sentiment(m["mood"])
+        moods_with_polarity.append({
+            "mood_id": m["mood_id"],
+            "time": m["time"],
+            "mood": m["mood"],
+            "polarity": polarity
+        })
+
+    return {"moods": moods_with_polarity}
 
 
 

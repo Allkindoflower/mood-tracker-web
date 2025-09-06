@@ -15,11 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let moodToDelete = null;
 
   function polarityToColor(polarity) {
-    const red = polarity < 0 ? 255 : Math.floor(255 * (1 - polarity));
-    const green = polarity > 0 ? 255 : Math.floor(255 * (1 + polarity));
-    const blue = 0;
-    return `rgb(${red}, ${green}, ${blue})`;
-  }
+  const red = polarity < 0 ? Math.floor(200 + 55 * (1 + polarity)) : 0;
+  const green = polarity > 0 ? Math.floor(200 + 55 * polarity) : 0;
+  return `rgb(${red}, ${green}, 0)`; 
+}
+
 
   const openPopup = (popup) => {
     popup.classList.remove("hidden");
@@ -49,8 +49,10 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         if (polarity !== undefined) {
-          li.style.backgroundColor = polarityToColor(polarity);
-        }
+          li.style.color = polarityToColor(polarity);
+          li.style.backgroundColor = "white";
+}
+
 
         list.appendChild(li);
       });

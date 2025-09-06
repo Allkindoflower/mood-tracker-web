@@ -1,11 +1,22 @@
-from textblob import TextBlob
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+# Initialize once
+vader = SentimentIntensityAnalyzer()
 
 def classify_sentiment(text: str):
-    polarity = TextBlob(text).sentiment.polarity
+    """
+    Returns:
+        sentiment (str): 'positive', 'neutral', 'negative'
+        polarity (float): -1.0 → 1.0
+    """
+    vader_scores = vader.polarity_scores(text)
+    polarity = vader_scores["compound"]  # -1 to 1
+
     if polarity > 0.1:
         sentiment = "positive"
     elif polarity < -0.1:
         sentiment = "negative"
     else:
         sentiment = "neutral"
+
     return sentiment, polarity
