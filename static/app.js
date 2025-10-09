@@ -17,11 +17,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let moodToDelete = null;
 
-  function polarityToColor(polarity) {
-  const red = polarity < 0 ? Math.floor(200 + 55 * (1 + polarity)) : 0;
-  const green = polarity > 0 ? Math.floor(200 + 55 * polarity) : 0;
-  return `rgb(${red}, ${green}, 0)`; 
+ function polarityToColor(polarity) {
+  // Clamp polarity just in case
+  polarity = Math.max(-1, Math.min(1, polarity));
+
+  if (polarity > 0) {
+    // 0 → 1: yellow to green
+    const r = Math.floor(200 * (1 - polarity)); // red fades out
+    const g = Math.floor(200 + 55 * polarity); // green brightens
+    return `rgb(${r}, ${g}, 0)`;
+  } else if (polarity < 0) {
+    // -1 → 0: red to yellow
+    const r = Math.floor(200 + 55 * -polarity); // red brightens
+    const g = Math.floor(200 * (1 + polarity)); // green fades in
+    return `rgb(${r}, ${g}, 0)`;
+  } else {
+    return "rgb(200,200,0)"; // neutral yellow
+  }
 }
+
 
 
   const openPopup = (popup) => {
@@ -57,7 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Keep text color by sentiment
       if (polarity !== undefined) {
-        li.style.color = polarityToColor(polarity);
+        li.style.backgroundColor = polarityToColor(polarity);
+        li.style.color = "#000";
       }
 
       list.appendChild(li);

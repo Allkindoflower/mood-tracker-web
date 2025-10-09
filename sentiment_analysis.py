@@ -1,10 +1,10 @@
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import nltk
 
-# Download beforehand for deployment
+# Download for deployment
 nltk.download('vader_lexicon', quiet=True)
 
-# Initialize once
+# Initialize
 vader = SentimentIntensityAnalyzer()
 
 def classify_sentiment(text: str):
@@ -16,9 +16,9 @@ def classify_sentiment(text: str):
     vader_scores = vader.polarity_scores(text)
     polarity = vader_scores["compound"]  # -1 to 1
 
-    if polarity > 0.1:
+    if polarity > 0.3:
         sentiment = "positive"
-    elif polarity < -0.1:
+    elif polarity < -0.3:
         sentiment = "negative"
     else:
         sentiment = "neutral"

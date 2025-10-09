@@ -46,7 +46,7 @@ def get_moods(user_id):
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    return [dict(row) for row in rows]  # convert Row objects to dicts
+    return [dict(row) for row in rows]
 
 
 def delete_mood_db(mood_id):

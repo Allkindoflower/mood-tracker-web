@@ -5,8 +5,7 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from models import MoodEntry
 from database import create_table, add_mood, delete_mood_db, get_mood_count, get_moods
-from sentiment_analysis import classify_sentiment
-
+import sentiment_analysis
 
 
 app = FastAPI()
@@ -15,7 +14,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 create_table()
 
-@app.middleware("http")
+@app.middleware("http")    
 async def add_user_id_cookie(request: Request, call_next):
     user_id = request.cookies.get("user_id")
     if not user_id:
@@ -37,7 +36,7 @@ def log_mood(entry: MoodEntry, user_id: str = Cookie(None)):
         user_id = str(uuid.uuid4())
 
     mood_to_save = entry.mood.lower()
-    sentiment, polarity = classify_sentiment(mood_to_save)
+    sentiment, polarity = sentiment_analysis.classify_sentiment(mood_to_save)
 
     now = datetime.now()
     time_str = f"{now.year}-{now.month:02d}-{now.day:02d} {now.hour}:{now.minute:02d}"
@@ -62,7 +61,7 @@ def show_moods(user_id: str = Cookie(None)):
     # Compute polarity dynamically
     moods_with_polarity = []
     for m in moods:
-        _, polarity = classify_sentiment(m["mood"])
+        _, polarity = sentiment_analysis.classify_sentiment(m["mood"])
         moods_with_polarity.append({
             "mood_id": m["mood_id"],
             "time": m["time"],
